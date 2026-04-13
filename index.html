@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YOU ARE AN IDIOT!!!</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      background: #ff0000;
+      cursor: none;
+    }
+
+    #main-text {
+      text-align: center;
+      z-index: 999;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #main-text h1 {
+      font-size: clamp(3rem, 10vw, 8rem);
+      color: #fff;
+      text-shadow:
+        4px 4px 0 #000,
+        -4px -4px 0 #000,
+        4px -4px 0 #000,
+        -4px 4px 0 #000;
+      letter-spacing: 4px;
+      animation: bounce 0.3s infinite alternate;
+    }
+
+    #main-text p {
+      font-size: clamp(1rem, 3vw, 2.5rem);
+      color: #ffff00;
+      text-shadow: 2px 2px 0 #000;
+      margin-top: 1rem;
+      animation: shake 0.2s infinite;
+    }
+
+    @keyframes bounce {
+      from { transform: scale(1) rotate(-2deg); }
+      to   { transform: scale(1.08) rotate(2deg); }
+    }
+
+    @keyframes shake {
+      0%   { transform: translateX(-4px); }
+      50%  { transform: translateX(4px); }
+      100% { transform: translateX(-4px); }
+    }
+
+    /* Floating emoji chaos */
+    .floater {
+      position: fixed;
+      font-size: 3rem;
+      pointer-events: none;
+      z-index: 998;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      from { transform: translateY(110vh) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* Popup windows */
+    .popup {
+      position: fixed;
+      background: #c0c0c0;
+      border: 3px outset #ffffff;
+      border-radius: 2px;
+      min-width: 260px;
+      max-width: 340px;
+      z-index: 10000;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.6);
+      font-family: 'MS Sans Serif', 'Tahoma', sans-serif;
+      font-size: 13px;
+      animation: popIn 0.15s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-titlebar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: white;
+      padding: 4px 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 12px;
+      cursor: move;
+    }
+
+    .popup-close {
+      background: #c0c0c0;
+      border: 2px outset #ffffff;
+      color: #000;
+      font-weight: bold;
+      font-size: 11px;
+      width: 20px;
+      height: 18px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+    }
+
+    .popup-close:active { border-style: inset; }
+
+    .popup-body {
+      padding: 16px;
+      text-align: center;
+      background: #c0c0c0;
+      color: #000;
+    }
+
+    .popup-body p { margin-bottom: 12px; font-size: 13px; }
+
+    .popup-btn {
+      background: #c0c0c0;
+      border: 2px outset #ffffff;
+      padding: 4px 18px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      margin: 3px;
+    }
+
+    .popup-btn:active { border-style: inset; }
+
+    /* Cursor trail */
+    .cursor-dot {
+      position: fixed;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      mix-blend-mode: difference;
+      transition: transform 0.05s;
+    }
+
+    /* Scrolling marquee banner */
+    #banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #000;
+      color: #00ff00;
+      font-size: 1.4rem;
+      font-family: 'Comic Sans MS', cursive;
+      padding: 6px 0;
+      z-index: 9999;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    #banner-inner {
+      display: inline-block;
+      animation: marquee 10s linear infinite;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(100vw); }
+      to   { transform: translateX(-100%); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main text -->
+  <div id="main-text">
+    <h1>YOU ARE AN IDIOT!!!</h1>
+    <p>HA HA HA HA HA HA HA HA HA HA HA</p>
+  </div>
+
+  <!-- Scrolling banner -->
+  <div id="banner">
+    <span id="banner-inner">
+      🎉 YOU ARE AN IDIOT!!! 🎉 HA HA HA HA HA!!! 🎉 YOU ARE AN IDIOT!!! 🎉 HA HA HA HA HA!!!
+      🎉 YOU ARE AN IDIOT!!! 🎉 HA HA HA HA HA!!!
+    </span>
+  </div>
+
+  <!-- Audio (Web Audio API — no external file needed) -->
+  <script>
+    // ─── AUDIO: synthesised "HA HA HA" laugh loop ───────────────────────────
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+
+    function initAudio() {
+      if (audioCtx) return;
+      audioCtx = new AudioCtx();
+      playLaughLoop();
+    }
+
+    function playLaughLoop() {
+      const notes = [
+        { freq: 600, dur: 0.08 },
+        { freq: 500, dur: 0.08 },
+        { freq: 600, dur: 0.08 },
+        { freq: 0,   dur: 0.15 },
+      ];
+      let t = audioCtx.currentTime;
+      const repeat = 12;
+      for (let r = 0; r < repeat; r++) {
+        for (const n of notes) {
+          if (n.freq === 0) { t += n.dur; continue; }
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(n.freq, t);
+          gain.gain.setValueAtTime(0.25, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + n.dur * 0.9);
+          osc.start(t); osc.stop(t + n.dur);
+          t += n.dur;
+        }
+      }
+      // Loop it
+      setTimeout(() => { if (audioCtx) playLaughLoop(); }, (t - audioCtx.currentTime) * 1000 - 100);
+    }
+
+    // Start on first interaction
+    document.addEventListener('click', initAudio, { once: false });
+    document.addEventListener('keydown', initAudio, { once: true });
+    // Also auto-start after short delay
+    setTimeout(() => { try { initAudio(); } catch(e){} }, 500);
+
+    // ─── BACKGROUND FLASH ───────────────────────────────────────────────────
+    const colors = [
+      '#ff0000','#ff6600','#ffff00','#00ff00',
+      '#00ffff','#0000ff','#ff00ff','#ff0088'
+    ];
+    let ci = 0;
+    setInterval(() => {
+      ci = (ci + 1) % colors.length;
+      document.body.style.background = colors[ci];
+    }, 120);
+
+    // ─── FLOATING EMOJIS ────────────────────────────────────────────────────
+    const emojis = ['😂','🤣','💀','🤡','👻','💩','🎉','🔥','⚡','🐸','🎪'];
+    function spawnFloater() {
+      const el = document.createElement('div');
+      el.className = 'floater';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      const dur = 2 + Math.random() * 4;
+      el.style.animationDuration = dur + 's';
+      el.style.fontSize = (2 + Math.random() * 4) + 'rem';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000 + 500);
+    }
+    setInterval(spawnFloater, 250);
+
+    // ─── CURSOR TRAIL ───────────────────────────────────────────────────────
+    document.addEventListener('mousemove', (e) => {
+      const dot = document.createElement('div');
+      dot.className = 'cursor-dot';
+      dot.style.left = (e.clientX - 8) + 'px';
+      dot.style.top  = (e.clientY - 8) + 'px';
+      dot.style.background = colors[Math.floor(Math.random() * colors.length)];
+      document.body.appendChild(dot);
+      setTimeout(() => dot.remove(), 500);
+    });
+
+    // ─── POPUPS ─────────────────────────────────────────────────────────────
+    const popupMessages = [
+      { title: '⚠️ Warning!!!', body: 'You are an IDIOT!!!', btns: ['OK', 'Cancel', 'No u'] },
+      { title: '🔔 Alert', body: 'Your IQ has been detected: 0', btns: ['Accept', 'Deny'] },
+      { title: '🎉 Congratulations!', body: 'You just lost The Game!', btns: ['Nooo!', 'OK fine'] },
+      { title: '🛑 Error 404', body: 'Intelligence not found on this device.', btns: ['Try Again', 'Give Up'] },
+      { title: '😂 HA HA HA', body: 'You fell for it. Classic idiot move.', btns: ['LOL', 'I know'] },
+      { title: '🤡 Notice', body: 'This is your 1000th popup today.', btns: ['Close', 'Close', 'CLOSE'] },
+      { title: '🔥 Hot Deal!!!', body: 'Buy 1 brain cell, get 0 free!', btns: ['Buy Now', 'Later'] },
+    ];
+
+    let popupCount = 0;
+    const maxPopups = 12;
+
+    function makeDraggable(el, handle) {
+      let dx = 0, dy = 0, startX, startY;
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        startX = e.clientX - dx;
+        startY = e.clientY - dy;
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDrag);
+      });
+      function drag(e) {
+        dx = e.clientX - startX;
+        dy = e.clientY - startY;
+        el.style.transform = `translate(${dx}px, ${dy}px)`;
+      }
+      function stopDrag() {
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('mouseup', stopDrag);
+      }
+    }
+
+    function spawnPopup() {
+      if (popupCount >= maxPopups) return;
+      popupCount++;
+
+      const msg = popupMessages[Math.floor(Math.random() * popupMessages.length)];
+      const popup = document.createElement('div');
+      popup.className = 'popup';
+
+      // Random position
+      const maxX = Math.max(window.innerWidth - 350, 50);
+      const maxY = Math.max(window.innerHeight - 200, 50);
+      popup.style.left = Math.random() * maxX + 'px';
+      popup.style.top  = Math.random() * maxY + 'px';
+
+      const titlebar = document.createElement('div');
+      titlebar.className = 'popup-titlebar';
+      titlebar.innerHTML = `<span>${msg.title}</span>`;
+
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'popup-close';
+      closeBtn.textContent = '✕';
+      closeBtn.onclick = () => {
+        // 50% chance: close spawns two more
+        popup.remove();
+        popupCount--;
+        if (Math.random() < 0.7) {
+          setTimeout(spawnPopup, 100);
+          setTimeout(spawnPopup, 250);
+        }
+      };
+      titlebar.appendChild(closeBtn);
+
+      const body = document.createElement('div');
+      body.className = 'popup-body';
+      body.innerHTML = `<p>${msg.body}</p>`;
+
+      for (const label of msg.btns) {
+        const btn = document.createElement('button');
+        btn.className = 'popup-btn';
+        btn.textContent = label;
+        btn.onclick = closeBtn.onclick;
+        body.appendChild(btn);
+      }
+
+      popup.appendChild(titlebar);
+      popup.appendChild(body);
+      document.body.appendChild(popup);
+      makeDraggable(popup, titlebar);
+
+      // Auto-move popup randomly
+      setInterval(() => {
+        if (!document.body.contains(popup)) return;
+        const nx = Math.random() * Math.max(window.innerWidth - 350, 0);
+        const ny = Math.random() * Math.max(window.innerHeight - 200, 0);
+        popup.style.left = nx + 'px';
+        popup.style.top  = ny + 'px';
+        popup.style.transform = '';
+      }, 2500 + Math.random() * 2000);
+    }
+
+    // Spawn popups with escalating frequency
+    setTimeout(() => spawnPopup(), 800);
+    setTimeout(() => spawnPopup(), 1600);
+    setInterval(() => {
+      if (popupCount < maxPopups) spawnPopup();
+    }, 2000);
+
+    // ─── TITLE BAR FLASH ────────────────────────────────────────────────────
+    const titles = [
+      'YOU ARE AN IDIOT!!!',
+      'HA HA HA HA HA!!!',
+      '😂😂😂😂😂',
+      'IDIOT DETECTED!!!',
+      'HAHAHAHAHAHA!!!'
+    ];
+    let ti = 0;
+    setInterval(() => {
+      ti = (ti + 1) % titles.length;
+      document.title = titles[ti];
+    }, 500);
+
+    // ─── PREVENT RIGHT CLICK ────────────────────────────────────────────────
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // ─── SHAKE THE PAGE ─────────────────────────────────────────────────────
+    setInterval(() => {
+      const x = (Math.random() - 0.5) * 12;
+      const y = (Math.random() - 0.5) * 12;
+      document.body.style.transform = `translate(${x}px, ${y}px)`;
+      setTimeout(() => document.body.style.transform = '', 60);
+    }, 400);
+  </script>
+</body>
+</html>
+</invoke>
